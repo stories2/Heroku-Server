@@ -1,7 +1,15 @@
 const express = require('express')
 const path = require('path')
 const cool = require('cool-ascii-faces')
+const { Pool } = require('pg');
 const PORT = process.env.PORT || 5000
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: true
+})
+
+var async = require('asyncawait/async')
+var await = require('asyncawait/await')
 
 app = express()
   .use(express.static(path.join(__dirname, 'public')))
@@ -18,5 +26,19 @@ app.get('/times', function (req, res) {
     }
     res.send(result)
 })
+
+app.get('/db', async(function(req, res) {
+    try {
+        console.log(process.env.DATABASE_URL)
+        const client = await (pool.connect())
+        const result = await (client.query('SELECT * FROM test_table'))
+        res.render('pages/db', result)
+        client.release()
+    }
+    catch(err) {
+        console.log(err)
+        res.send("Error " + err)
+    }
+}))
 
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`))

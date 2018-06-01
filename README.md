@@ -24,3 +24,9 @@ heroku local web
 ### Cannot deploy app
 
 - Make sure original git push commit. Then, push to heroku.
+
+### Export env var
+
+```
+heroku config:get <VAR NAME> -s >> .env
+```
